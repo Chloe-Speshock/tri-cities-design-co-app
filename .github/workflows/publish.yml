@@ -1,0 +1,50 @@
+name: Build and Push Docker Image
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+    inputs:
+      tag:
+        required: true
+
+env:
+  DOCKER_IMAGE: tri_cities_design_co_app
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-west-2
+
+      - name: Set version
+        run: |
+          if [[ "${{ github.event_name }}" = "workflow_dispatch" ]]; then
+            export VERSION=${{ github.event.inputs.tag }}
+            echo "VERSION=dev-$VERSION" >> $GITHUB_ENV
+          else
+            export VERSION=$(jq -r .version package.json)
+            echo "VERSION=$VERSION" >> $GITHUB_ENV
+        shell: bash
+
+      - name: Login to Amazon ECR
+        id: ecr
+        uses: aws-actions/amazon-ecr-login@main
+
+      - uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: Dockerfile
+          push: true
+          tags: ${{ steps.ecr.outputs.registry }}/${{ env.DOCKER_IMAGE }}:${{ env.VERSION }}
+

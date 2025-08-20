@@ -39,6 +39,7 @@ jobs:
           else
             export VERSION=$(jq -r .version package.json)
             echo "VERSION=$VERSION" >> $GITHUB_ENV
+          fi
         shell: bash
 
       - name: Login to Amazon ECR

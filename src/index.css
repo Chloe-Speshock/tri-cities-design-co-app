@@ -63,37 +63,22 @@ p {
   backdrop-filter: blur(10px);
   z-index: 1000;
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  height: 80px; /* Fixed header height */
 }
 
 .header .container {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem 20px;
+  padding: 0 20px; /* Remove top/bottom padding */
+  height: 100%; /* Take full height of header */
 }
 
 /* Logo */
 .header .logo .logo-image {
-  height: 40px;
+  height: 75px; /* Fill the header height completely */
   width: auto;
   max-width: 200px;
-  object-fit: contain;
-}
-
-.logo-section {
-  padding: 40px 0;
-  background: white;
-  text-align: center;
-  max-height: 200px;
-  overflow: hidden;
-}
-
-.logo-section .logo-display .main-logo {
-  height: 120px;
-  width: auto;
-  max-width: 400px;
-  display: block;
-  margin: 0 auto;
   object-fit: contain;
 }
 

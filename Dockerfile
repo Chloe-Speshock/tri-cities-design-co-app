@@ -1,6 +1,17 @@
-FROM nginx:alpine
-RUN rm /etc/nginx/conf.d/default.conf
-COPY src/nginx.conf /etc/nginx/nginx.conf
-COPY src/ /usr/share/nginx/html
-EXPOSE 80
-CMD ["nginx", "-g", "daemon off;"]
+FROM node:18-alpine
+
+WORKDIR /app
+
+# Copy package files
+COPY package*.json ./
+
+# Install dependencies
+RUN npm install
+
+# Copy source files
+COPY src/ ./src/
+COPY server.js ./
+
+EXPOSE 3000
+
+CMD ["npm", "start"]

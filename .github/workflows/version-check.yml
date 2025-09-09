@@ -94,3 +94,34 @@ jobs:
           env
           
         shell: bash
+
+      - name: Evaluate for error
+        run: |
+          function evaluate_for_error {
+            local errors_exist="0"
+
+            echo "--------------------------------------------------"
+
+            if [ "$APP_CHANGE" == "1" ] && [ "$APP_VERSION_GREATER" == "0" ]; then
+                echo "version was not increased with changes"
+                errors_exist=1
+            elif [ "$APP_CHANGE" == "0" ] && [ "$APP_VERSION_GREATER" == "1" ]; then
+                echo "version was increased but no changes were made"
+                errors_exist=1
+            elif [ "$APP_CHANGE" == "0" ] && [ "$APP_VERSION" != "$PREV_APP_VERSION" ]; then
+                echo "version decreased compared to the branch being merged into"
+                errors_exist=1
+            else
+                echo "No errors found"
+            fi
+
+            echo "--------------------------------------------------"
+
+            if [ "$errors_exist" == "1" ]; then
+                echo ""
+                echo "--------------------------------------------------"
+                exit 1
+            fi
+          }
+
+          evaluate_for_error

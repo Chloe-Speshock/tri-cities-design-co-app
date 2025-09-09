@@ -38,6 +38,8 @@ jobs:
             echo "APP_CHANGE=0" >> $GITHUB_ENV
           fi
 
+          env
+
       - name: Compare versions
         run: |
           git checkout main

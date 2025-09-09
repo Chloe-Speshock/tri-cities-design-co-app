@@ -9,8 +9,10 @@ jobs:
   version-check:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+            fetch-depth: 0
 
 
       - name: Set up GitHub Environment variables 

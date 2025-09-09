@@ -1,6 +1,6 @@
 {
   "name": "tri-cities-design-co-app",
-  "version": "1.0.6",
+  "version": "1.1.0",
   "description": "Tri Cities Design Co. website",
   "main": "server.js",
   "scripts": {

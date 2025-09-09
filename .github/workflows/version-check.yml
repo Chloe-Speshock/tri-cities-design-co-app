@@ -97,6 +97,7 @@ jobs:
 
       - name: Evaluate for error
         run: |
+          env
           function evaluate_for_error {
             local errors_exist="0"
 

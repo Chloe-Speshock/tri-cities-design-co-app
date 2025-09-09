@@ -4,8 +4,6 @@ on:
   pull_request:
     branches: [main]
     types: [opened, reopened, synchronize, edited]
-  push:
-    branches: [APP-4-version-check]
 
 jobs:
   version-check:
@@ -26,7 +24,8 @@ jobs:
           
       - name: Identify changes
         run: |
-          git diff --name-only $(git merge-base origin/${{ github.head_ref }} origin/main) origin/${{ github.head_ref }} > diff.txt
+          git diff --name-only $(git merge-base origin/${{ github.head_ref }} origin/${{ github.base_ref }}) origin/${{ github.head_ref }} > diff.txt
+
           cat diff.txt
           
       - name: Determine if app has changed

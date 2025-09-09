@@ -27,7 +27,6 @@ jobs:
       - name: Identify changes
         run: |
           git diff --name-only $(git merge-base origin/${{ github.head_ref }} origin/${{ github.base_ref }}) origin/${{ github.head_ref }} > diff.txt
-          cat diff.txt
           
       - name: Determine if app has changed
         run: |
@@ -45,55 +44,53 @@ jobs:
             fi
           fi
 
+      - name: Compare versions
+        run: |
+          git checkout main
+
+          export PREV_APP_VERSION=$(jq -r .version package.json)
+          echo "PREV_APP_VERSION=$PREV_APP_VERSION" >> $GITHUB_ENV
+          
+          # Function to compare version numbers
+          function new_greater_than_prev {
+              prev=$1
+              new=$2
+
+              # Split version numbers by '.'
+              IFS='.' read -r -a prev_strarr <<< "$prev"
+              prev_major=${prev_strarr[0]}
+              prev_minor=${prev_strarr[1]}
+              prev_patch=${prev_strarr[2]}
+
+              IFS='.' read -r -a new_strarr <<< "$new"
+              new_major=${new_strarr[0]}
+              new_minor=${new_strarr[1]}
+              new_patch=${new_strarr[2]}
+
+              # Compare major, minor, and patch versions
+              if [ "$new_major" -gt "$prev_major" ]; then
+                  echo "1"
+              elif [ "$new_major" -eq "$prev_major" ]; then
+                  if [ "$new_minor" -gt "$prev_minor" ]; then
+                      echo "1"
+                  elif [ "$new_minor" -eq "$prev_minor" ]; then
+                      if [ "$new_patch" -gt "$prev_patch" ]; then
+                          echo "1"
+                      else
+                          echo "0"
+                      fi
+                  else
+                      echo "0"
+                  fi
+              else
+                  echo "0"
+              fi
+          }
+
+          
+          export APP_VERSION_GREATER=$(new_greater_than_prev $PREV_APP_VERSION $APP_VERSION)
+          echo "APP_VERSION_GREATER=$APP_VERSION_GREATER" >> $GITHUB_ENV
+
           env
-
-    #   - name: Compare versions
-    #     run: |
-    #       git checkout main
-
-    #       export PREV_APP_VERSION=$(jq -r .version package.json)
-    #       echo "PREV_APP_VERSION=$PREV_APP_VERSION" >> $GITHUB_ENV
           
-    #       # Function to compare version numbers
-    #       function new_greater_than_prev {
-    #           prev=$1
-    #           new=$2
-
-    #           # Split version numbers by '.'
-    #           IFS='.' read -r -a prev_strarr <<< "$prev"
-    #           prev_major=${prev_strarr[0]}
-    #           prev_minor=${prev_strarr[1]}
-    #           prev_patch=${prev_strarr[2]}
-
-    #           IFS='.' read -r -a new_strarr <<< "$new"
-    #           new_major=${new_strarr[0]}
-    #           new_minor=${new_strarr[1]}
-    #           new_patch=${new_strarr[2]}
-
-    #           # Compare major, minor, and patch versions
-    #           if [ "$new_major" -gt "$prev_major" ]; then
-    #               echo "1"
-    #           elif [ "$new_major" -eq "$prev_major" ]; then
-    #               if [ "$new_minor" -gt "$prev_minor" ]; then
-    #                   echo "1"
-    #               elif [ "$new_minor" -eq "$prev_minor" ]; then
-    #                   if [ "$new_patch" -gt "$prev_patch" ]; then
-    #                       echo "1"
-    #                   else
-    #                       echo "0"
-    #                   fi
-    #               else
-    #                   echo "0"
-    #               fi
-    #           else
-    #               echo "0"
-    #           fi
-    #       }
-
-          
-    #       export APP_VERSION_GREATER=$(new_greater_than_prev $PREV_APP_VERSION $APP_VERSION)
-    #       echo "APP_VERSION_GREATER=$APP_VERSION_GREATER" >> $GITHUB_ENV
-
-    #       env
-          
-    #     shell: bash
+        shell: bash

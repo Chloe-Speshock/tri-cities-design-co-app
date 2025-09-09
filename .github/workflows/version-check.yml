@@ -27,6 +27,7 @@ jobs:
       - name: Identify changes
         run: |
           git diff --name-only $(git merge-base $BRANCH_NAME main) $BRANCH_NAME > diff.txt
+          cat diff.txt
           
       - name: Determine if app has changed
         run: |

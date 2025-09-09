@@ -1,0 +1,90 @@
+name: Version Check
+
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, reopened, synchronize, edited]
+  push:
+    branches: [APP-4-version-check]
+
+jobs:
+  version-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+
+      - name: Set up GitHub Environment variables 
+        run: |
+          echo "BRANCH_NAME=${{ github.head_ref }}" >> $GITHUB_ENV
+          
+      - name: Get Current Version
+        run: |
+          export APP_VERSION=$(jq -r .version package.json)
+          echo "APP_VERSION=$APP_VERSION" >> $GITHUB_ENV
+          
+      - name: Identify changes
+        run: |
+          git diff --name-only 'git merge-base origin/$BRANCH_NAME origin/main' origin/$BRANCH_NAME > diff.txt
+          
+      - name: Determine if app has changed
+        run: |
+          if [ -s "diff.txt" ]; then
+            export APP_CHANGE=1
+            echo "APP_CHANGE=1" >> $GITHUB_ENV
+          else
+            export APP_CHANGE=0
+            echo "APP_CHANGE=0" >> $GITHUB_ENV
+          fi
+
+      - name: Compare versions
+        run: |
+          git checkout main
+
+          export PREV_APP_VERSION=$(jq -r .version package.json)
+          echo "PREV_APP_VERSION=$PREV_APP_VERSION" >> $GITHUB_ENV
+          
+          # Function to compare version numbers
+          function new_greater_than_prev {
+              prev=$1
+              new=$2
+
+              # Split version numbers by '.'
+              IFS='.' read -r -a prev_strarr <<< "$prev"
+              prev_major=${prev_strarr[0]}
+              prev_minor=${prev_strarr[1]}
+              prev_patch=${prev_strarr[2]}
+
+              IFS='.' read -r -a new_strarr <<< "$new"
+              new_major=${new_strarr[0]}
+              new_minor=${new_strarr[1]}
+              new_patch=${new_strarr[2]}
+
+              # Compare major, minor, and patch versions
+              if [ "$new_major" -gt "$prev_major" ]; then
+                  echo "1"
+              elif [ "$new_major" -eq "$prev_major" ]; then
+                  if [ "$new_minor" -gt "$prev_minor" ]; then
+                      echo "1"
+                  elif [ "$new_minor" -eq "$prev_minor" ]; then
+                      if [ "$new_patch" -gt "$prev_patch" ]; then
+                          echo "1"
+                      else
+                          echo "0"
+                      fi
+                  else
+                      echo "0"
+                  fi
+              else
+                  echo "0"
+              fi
+          }
+
+          
+          export APP_VERSION_GREATER=$(new_greater_than_prev $PREV_APP_VERSION $APP_VERSION)
+          echo "APP_VERSION_GREATER=$APP_VERSION_GREATER" >> $GITHUB_ENV
+
+          env
+          
+        shell: bash

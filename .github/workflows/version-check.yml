@@ -33,14 +33,18 @@ jobs:
           if grep -qE '\.(yaml|yml)$' diff.txt; then
             if grep -vE '\.(yaml|yml)$' diff.txt | grep -q .; then
               export APP_CHANGE=1
+              echo "APP_CHANGE=$APP_CHANGE" >> $GITHUB_ENV
             else
               export APP_CHANGE=0
+              echo "APP_CHANGE=$APP_CHANGE" >> $GITHUB_ENV
             fi
           else
             if [ -s "diff.txt" ]; then
               export APP_CHANGE=1
+              echo "APP_CHANGE=$APP_CHANGE" >> $GITHUB_ENV
             else
               export APP_CHANGE=0
+              echo "APP_CHANGE=$APP_CHANGE" >> $GITHUB_ENV
             fi
           fi
 

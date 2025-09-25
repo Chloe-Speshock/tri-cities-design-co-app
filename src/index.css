@@ -631,37 +631,58 @@ section:not(.hero) {
   padding: 80px 0;
 }
 
-.process-steps {
+.process-timeline {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 2rem;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 3rem;
+  margin-top: 3rem;
 }
 
 .process-step {
-  text-align: center;
+  position: relative;
+  background: white;
+  padding: 2.5rem 2rem;
+  border-radius: 0;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+  border: 1px solid #f0f0f0;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.process-step .step-number {
-  width: 60px;
-  height: 60px;
-  background: #3498db;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0 auto 1rem;
+.process-step:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+}
+
+.step-content {
+  text-align: left;
+}
+
+.step-number {
+  display: inline-block;
+  background: #2c3e50;
   color: white;
-  font-size: 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  padding: 0.5rem 1rem;
+  margin-bottom: 1.5rem;
+  letter-spacing: 1px;
   font-weight: bold;
 }
 
 .process-step h3 {
   color: #2c3e50;
+  font-size: 1.4rem;
+  font-weight: 600;
   margin-bottom: 1rem;
+  font-family: "Georgia", "Times New Roman", serif;
+  letter-spacing: 0.5px;
 }
 
 .process-step p {
   color: #666;
+  line-height: 1.6;
+  font-size: 1rem;
+  margin: 0;
 }
 
 /* ===== PORTFOLIO PAGE ===== */

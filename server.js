@@ -10,8 +10,17 @@ const s3Client = new S3Client({
   region: "us-east-1",
 });
 
-// Serve static files
-app.use(express.static("src"));
+// Serve static files with no caching for development
+app.use(express.static("src", {
+  setHeaders: (res, path) => {
+    // Disable caching for HTML, CSS, and JS files
+    if (path.endsWith('.html') || path.endsWith('.css') || path.endsWith('.js')) {
+      res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+      res.setHeader('Pragma', 'no-cache');
+      res.setHeader('Expires', '0');
+    }
+  }
+}));
 
 // Endpoint to serve any image from S3
 app.get("/api/image/*", async (req, res) => {

@@ -9,6 +9,8 @@
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.888.0",
-    "express": "^4.21.2"
+    "express": "^4.21.2",
+    "nodemailer": "^6.9.8",
+    "dotenv": "^16.4.5"
   }
 }

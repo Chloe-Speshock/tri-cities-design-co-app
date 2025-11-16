@@ -253,15 +253,6 @@ app.post('/api/contact', async (req, res) => {
 	} catch (error) {
 		console.error('Error processing contact form:', error);
 
-		// Provide more specific error messages
-		if (error.message.includes('SECRET_NAME')) {
-			return res.status(500).json({
-				success: false,
-				error:
-					'Email service is not properly configured. Please contact the administrator.',
-			});
-		}
-
 		res.status(500).json({
 			success: false,
 			error:

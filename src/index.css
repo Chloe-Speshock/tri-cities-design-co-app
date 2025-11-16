@@ -75,18 +75,23 @@ p {
   backdrop-filter: blur(10px);
   z-index: 1000;
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-  height: 80px; /* Fixed header height */
+  height: 100px; /* Increased height to accommodate padding */
 }
 
 .header .container {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 20px; /* Remove top/bottom padding */
+  padding: 15px 20px; /* Add vertical padding for spacing */
   height: 100%; /* Take full height of header */
 }
 
 /* Logo */
+.header .logo h1 {
+  font-size: 2.5rem;
+  font-weight: 300;
+  white-space: nowrap;
+}
 
 /* ===== NAVIGATION ===== */
 .nav-menu {
@@ -126,7 +131,7 @@ p {
 
 /* ===== HERO SECTION ===== */
 .hero {
-  margin-top: 80px;
+  margin-top: 100px;
   padding: 0;
 }
 
@@ -217,8 +222,17 @@ p {
 }
 
 /* ===== SECTIONS ===== */
-section:not(.hero) {
+section:not(.hero):not(.services-page):not(.team-section) {
   padding: 80px 0;
+}
+
+/* Services page needs extra top padding for fixed header */
+section.services-page {
+  padding-top: 120px;
+  padding-bottom: 80px;
+  padding-left: 0;
+  padding-right: 0;
+  margin-top: 0;
 }
 
 .section-title {
@@ -236,6 +250,9 @@ section:not(.hero) {
 .page-title {
   text-align: center;
   margin-bottom: 3rem;
+  margin-top: 0;
+  padding-top: 0;
+  scroll-margin-top: 120px; /* For anchor links */
   color: #1a1a1a;
   font-size: 2.5rem;
   font-family: "Playfair Display", Georgia, serif;
@@ -494,18 +511,39 @@ section:not(.hero) {
 }
 
 @media (max-width: 768px) {
+  .services-content-wrapper {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    margin-top: 2rem;
+  }
+
   .services-images {
     flex-direction: column;
     gap: 1.5rem;
+    position: static;
+  }
+
+  .service-image {
+    height: 300px;
   }
 
   .service-item {
     flex-direction: column;
     gap: 1rem;
+    margin-bottom: 3rem;
   }
 
   .service-number {
     min-width: auto;
+    font-size: 2.5rem;
+  }
+
+  .services-intro {
+    margin-bottom: 2rem;
+  }
+
+  .services-intro-text {
+    font-size: 1rem;
   }
 }
 
@@ -715,14 +753,21 @@ section:not(.hero) {
   font-weight: 400;
 }
 
-.team-section {
+section.team-section {
   background: #f8f9fa;
-  padding: 80px 0;
+  padding-top: 120px; /* Extra top padding to account for fixed header */
+  padding-bottom: 80px;
+  padding-left: 0;
+  padding-right: 0;
+  margin-top: 0;
 }
 
 .team-section h3 {
   text-align: center;
   margin-bottom: 3rem;
+  margin-top: 0;
+  padding-top: 0;
+  scroll-margin-top: 120px; /* For anchor links */
   color: #1a1a1a;
   font-family: "Playfair Display", Georgia, serif;
   font-weight: 300;
@@ -1344,25 +1389,53 @@ section:not(.hero) {
 @media (max-width: 768px) {
   .nav-menu {
     position: fixed;
-    top: 100%;
+    top: 100px;
     left: 0;
     right: 0;
     background: white;
     flex-direction: column;
     padding: 2rem;
     box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
-    transform: translateY(-100%);
+    transform: translateX(-100%);
     opacity: 0;
+    visibility: hidden;
     transition: all 0.3s ease;
+    z-index: 999;
+    width: 100%;
+    max-width: 300px;
+    height: calc(100vh - 100px);
+    overflow-y: auto;
   }
 
   .nav-menu.active {
-    transform: translateY(0);
+    transform: translateX(0);
     opacity: 1;
+    visibility: visible;
   }
 
   .nav-toggle {
     display: flex;
+    z-index: 1001;
+  }
+
+  .nav-menu li {
+    width: 100%;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #f0f0f0;
+  }
+
+  .nav-menu a {
+    display: block;
+    width: 100%;
+    padding: 0.5rem 0;
+    font-size: 1rem;
+  }
+
+  .header .logo h1 {
+    font-size: 1.5rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .hero-title {
@@ -1373,10 +1446,22 @@ section:not(.hero) {
     font-size: 1.1rem;
   }
 
-  .about-content,
+  .about-content {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  .about-image {
+    order: -1;
+  }
+
   .contact-content {
     grid-template-columns: 1fr;
     gap: 2rem;
+  }
+
+  .contact-left-column {
+    gap: 1.5rem;
   }
 
   .contact-form,
@@ -1413,11 +1498,90 @@ section:not(.hero) {
   .hero-buttons,
   .cta-buttons {
     flex-direction: column;
-    align-items: center;
+    align-items: stretch;
+    width: 100%;
   }
 
-  section:not(.hero) {
+  .hero-buttons .cta-button,
+  .cta-buttons .cta-button {
+    width: 100%;
+    text-align: center;
+  }
+
+  .hero-content {
     padding: 60px 0;
+  }
+
+  .hero-image {
+    height: 60vh;
+  }
+
+  .page-title,
+  .section-title {
+    font-size: 2rem;
+    margin-bottom: 2rem;
+  }
+
+  .about-text h2 {
+    font-size: 2rem;
+  }
+
+  .team-section {
+    padding: 40px 0;
+  }
+
+  .team-member {
+    flex-direction: column;
+    gap: 1.5rem;
+    min-height: auto;
+  }
+
+  .member-photo-section {
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    width: 100%;
+  }
+
+  .member-photo img {
+    width: 100%;
+    max-width: 300px;
+    height: auto;
+    aspect-ratio: 1;
+    margin-bottom: 1rem;
+  }
+
+  .member-bio {
+    padding: 1rem 0;
+  }
+
+  .contact-image {
+    height: 300px;
+  }
+
+  .contact-image img {
+    height: 120%;
+    margin-top: -10%;
+  }
+
+  section:not(.hero):not(.services-page):not(.team-section) {
+    padding: 60px 0;
+  }
+
+  section.services-page {
+    padding-top: 100px;
+    padding-bottom: 60px;
+  }
+
+  section.team-section {
+    padding-top: 100px;
+    padding-bottom: 60px;
+  }
+
+  .page-title,
+  .team-section h3 {
+    padding-top: 0;
+    margin-top: 0;
   }
 
   .container {

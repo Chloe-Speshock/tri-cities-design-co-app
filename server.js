@@ -1,6 +1,3 @@
-// Load environment variables from .env file (for local development)
-// require("dotenv").config();
-
 const express = require('express');
 const { S3Client, GetObjectCommand } = require('@aws-sdk/client-s3');
 const {

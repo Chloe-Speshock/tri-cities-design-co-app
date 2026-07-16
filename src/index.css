@@ -1,4 +1,4 @@
-/* Tri Cities Design Co. - Simplified CSS */
+/* Tri-Cities Design Co. - Simplified CSS */
 
 /* ===== RESET & BASE ===== */
 * {
@@ -169,6 +169,51 @@ p {
   line-height: 1.2;
   color: #1a1a1a;
   text-align: center;
+}
+
+/* Overlay on hero image for large left-aligned title */
+.hero-overlay {
+  position: absolute;
+  left: 10%; 
+  top: 35%; 
+  transform: translateY(-50%);
+  max-width: 30%;
+  min-width: 220px;
+  min-height: 420px; 
+  z-index: 3;
+  pointer-events: none; 
+  padding: 3rem 1.6rem; 
+  border-radius: 8px;
+  background: linear-gradient(90deg, rgba(0,0,0,0.68) 0%, rgba(0,0,0,0.36) 55%, rgba(0,0,0,0) 100%);
+}
+
+.hero-overlay .hero-title {
+  color: #ffffff;
+  text-transform: none; 
+  font-weight: 400;
+  letter-spacing: 0.01em;
+  line-height: 0.98;
+  margin: 0;
+  text-align: left;
+  -webkit-font-smoothing: antialiased;
+  text-shadow: 0 6px 22px rgba(0, 0, 0, 0.45);
+  /* Slightly reduced max size to prevent overflowing the taller narrower box while keeping large display */
+  font-size: clamp(2.6rem, 6.2vw, 6rem);
+}
+
+@media (max-width: 768px) {
+  .hero-overlay {
+    left: 4%;
+    top: 36%;
+    max-width: 92%;
+    min-height: 220px;
+    padding: 1rem 1.1rem;
+    border-radius: 6px;
+  }
+  .hero-overlay .hero-title {
+    font-size: clamp(1.6rem, 9.5vw, 3rem);
+    letter-spacing: 0.02em;
+  }
 }
 
 .hero-subtitle {

@@ -52,7 +52,7 @@ async function getEmailConfig() {
 		const response = await secretsClient.send(
 			new GetSecretValueCommand({
 				SecretId: secretName,
-			})
+			}),
 		);
 
 		const secrets = JSON.parse(response.SecretString);
@@ -67,7 +67,7 @@ async function getEmailConfig() {
 		cacheExpiry = Date.now() + CACHE_TTL;
 
 		console.log(
-			'Successfully fetched email configuration from Secrets Manager'
+			'Successfully fetched email configuration from Secrets Manager',
 		);
 		return secrets;
 	} catch (error) {
@@ -91,7 +91,7 @@ app.use(
 				res.setHeader('Expires', '0');
 			}
 		},
-	})
+	}),
 );
 
 // Endpoint to serve any image from S3
@@ -203,7 +203,16 @@ app.post('/api/contact', async (req, res) => {
 			},
 		});
 
-		await sesClient.send(sendEmailCommand);
+		// Log the outgoing SES parameters (without exposing secrets)
+		try {
+			const sendResponse = await sesClient.send(sendEmailCommand);
+			console.log('SES send response metadata:', sendResponse && sendResponse.$metadata ? sendResponse.$metadata : sendResponse);
+		} catch (sesError) {
+			console.error('SES send error name:', sesError && sesError.name);
+			console.error('SES send error message:', sesError && sesError.message);
+			console.error('SES send full error:', sesError);
+			throw sesError;
+		}
 
 		// Send confirmation email to the user (optional)
 		// if (config.SEND_CONFIRMATION === 'true') {
@@ -214,20 +223,20 @@ app.post('/api/contact', async (req, res) => {
 		// 		},
 		// 		Message: {
 		// 			Subject: {
-		// 				Data: 'Thank you for contacting Tri Cities Design Co.',
+		// 				Data: 'Thank you for contacting Tri-Cities Design Co.',
 		// 				Charset: 'UTF-8',
 		// 			},
 		// 			Body: {
 		// 				Text: {
-		// 					Data: `Dear ${name},\n\nThank you for reaching out to Tri Cities Design Co. We have received your message and will get back to you soon.\n\nBest regards,\nTri Cities Design Co.`,
+		// 					Data: `Dear ${name},\n\nThank you for reaching out to Tri-Cities Design Co. We have received your message and will get back to you soon.\n\nBest regards,\nTri-Cities Design Co.`,
 		// 					Charset: 'UTF-8',
 		// 				},
 		// 				Html: {
 		// 					Data: `
-		//             <h2>Thank you for contacting Tri Cities Design Co.</h2>
+		//             <h2>Thank you for contacting Tri-Cities Design Co.</h2>
 		//             <p>Dear ${name},</p>
-		//             <p>Thank you for reaching out to Tri Cities Design Co. We have received your message and will get back to you soon.</p>
-		//             <p>Best regards,<br>Tri Cities Design Co.</p>
+		//             <p>Thank you for reaching out to Tri-Cities Design Co. We have received your message and will get back to you soon.</p>
+		//             <p>Best regards,<br>Tri-Cities Design Co.</p>
 		//           `,
 		// 					Charset: 'UTF-8',
 		// 				},

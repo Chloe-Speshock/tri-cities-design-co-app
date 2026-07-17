@@ -203,7 +203,20 @@ app.post('/api/contact', async (req, res) => {
 			},
 		});
 
-		await sesClient.send(sendEmailCommand);
+		// Log the outgoing SES parameters (without exposing secrets)
+		try {
+			console.log('SES send - Source:', config.FROM_EMAIL);
+			console.log('SES send - To:', config.CONTACT_EMAIL);
+			// Note: avoid logging the full message body in production
+			const sendResponse = await sesClient.send(sendEmailCommand);
+			console.log('SES send response metadata:', sendResponse && sendResponse.$metadata ? sendResponse.$metadata : sendResponse);
+		} catch (sesError) {
+			console.error('SES send error name:', sesError && sesError.name);
+			console.error('SES send error message:', sesError && sesError.message);
+			console.error('SES send full error:', sesError);
+			// Re-throw so outer catch reports a 500 and original error is available in logs
+			throw sesError;
+		}
 
 		// Send confirmation email to the user (optional)
 		// if (config.SEND_CONFIRMATION === 'true') {
